@@ -83,4 +83,9 @@ int nftnl_fprintf(FILE *fpconst, const void *obj, uint32_t cmd, uint32_t type,
 int nftnl_set_str_attr(const char **dptr, uint32_t *flags,
 		       uint16_t attr, const void *data, uint32_t data_len);
 
+struct nlattr;
+
+void nftnl_attr_put_ifname(struct nlmsghdr *nlh, const char *ifname);
+char *nftnl_attr_get_ifname(const struct nlattr *attr);
+
 #endif

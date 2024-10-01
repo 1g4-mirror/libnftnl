@@ -464,7 +464,7 @@ void nftnl_chain_nlmsg_build_payload(struct nlmsghdr *nlh, const struct nftnl_ch
 
 		nest_dev = mnl_attr_nest_start(nlh, NFTA_HOOK_DEVS);
 		nftnl_str_array_foreach(dev, &c->dev_array, i)
-			mnl_attr_put_strz(nlh, NFTA_DEVICE_NAME, dev);
+			nftnl_attr_put_ifname(nlh, dev);
 		mnl_attr_nest_end(nlh, nest_dev);
 	}
 
@@ -648,6 +648,8 @@ static int nftnl_chain_parse_hook(struct nlattr *attr, struct nftnl_chain *c)
 		c->flags |= (1 << NFTNL_CHAIN_PRIO);
 	}
 	if (tb[NFTA_HOOK_DEV]) {
+		if (c->flags & (1 << NFTNL_CHAIN_DEV))
+			xfree(c->dev);
 		c->dev = strdup(mnl_attr_get_str(tb[NFTA_HOOK_DEV]));
 		if (!c->dev)
 			return -1;

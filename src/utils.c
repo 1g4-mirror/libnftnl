@@ -13,8 +13,11 @@
 #include <errno.h>
 #include <inttypes.h>
 
+#include <libmnl/libmnl.h>
+
 #include <libnftnl/common.h>
 
+#include <linux/if.h>
 #include <linux/netfilter.h>
 #include <linux/netfilter/nf_tables.h>
 
@@ -145,4 +148,40 @@ int nftnl_set_str_attr(const char **dptr, uint32_t *flags,
 
 	*flags |= (1 << attr);
 	return 0;
+}
+
+static bool is_wildcard_str(const char *str)
+{
+	size_t len = strlen(str);
+
+	if (len < 1 || str[len - 1] != '*')
+		return false;
+	if (len < 2 || str[len - 2] != '\\')
+		return true;
+	/* XXX: ignore backslash escaping for now */
+	return false;
+}
+
+void nftnl_attr_put_ifname(struct nlmsghdr *nlh, const char *ifname)
+{
+	uint16_t attr = is_wildcard_str(ifname) ?
+			NFTA_DEVICE_PREFIX : NFTA_DEVICE_NAME;
+
+	mnl_attr_put_strz(nlh, attr, ifname);
+}
+
+char *nftnl_attr_get_ifname(const struct nlattr *attr)
+{
+	const char *dev = mnl_attr_get_str(attr);
+	char buf[IFNAMSIZ];
+
+	switch (mnl_attr_get_type(attr)) {
+	case NFTA_DEVICE_NAME:
+		return strdup(dev);
+	case NFTA_DEVICE_PREFIX:
+		snprintf(buf, IFNAMSIZ, "%s*", dev);
+		return strdup(buf);
+	default:
+		return NULL;
+	}
 }
