@@ -88,4 +88,7 @@ struct nlattr;
 void nftnl_attr_put_ifname(struct nlmsghdr *nlh, const char *ifname);
 char *nftnl_attr_get_ifname(const struct nlattr *attr);
 
+int nftnl_parse_str_attr(const struct nlattr *tb, int attr,
+			 const char **field, uint32_t *flags);
+
 #endif

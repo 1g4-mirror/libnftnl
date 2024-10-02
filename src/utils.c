@@ -192,3 +192,18 @@ char *nftnl_attr_get_ifname(const struct nlattr *attr)
 		return NULL;
 	}
 }
+
+int nftnl_parse_str_attr(const struct nlattr *tb, int attr,
+			 const char **field, uint32_t *flags)
+{
+	if (!tb)
+		return 0;
+
+	if (*flags & (1 << attr))
+		xfree(*field);
+	*field = strdup(mnl_attr_get_str(tb));
+	if (!*field)
+		return -1;
+	*flags |= (1 << attr);
+	return 0;
+}
