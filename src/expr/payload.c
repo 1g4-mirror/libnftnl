@@ -207,7 +207,7 @@ static const char *base2str_array[NFT_PAYLOAD_TUN_HEADER + 1] = {
 
 static const char *base2str(enum nft_payload_bases base)
 {
-	if (base > NFT_PAYLOAD_INNER_HEADER)
+	if (base >= array_size(base2str_array))
 		return "unknown";
 
 	return base2str_array[base];
