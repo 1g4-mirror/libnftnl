@@ -122,19 +122,6 @@ static const char *rt_key2str(uint8_t key)
 	return "unknown";
 }
 
-static inline int str2rt_key(const char *str)
-{
-	int i;
-
-	for (i = 0; i < NFT_RT_MAX; i++) {
-		if (strcmp(str, rt_key2str_array[i]) == 0)
-			return i;
-	}
-
-	errno = EINVAL;
-	return -1;
-}
-
 static int
 nftnl_expr_rt_snprintf(char *buf, size_t len,
 		       uint32_t flags, const struct nftnl_expr *e)

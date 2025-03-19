@@ -162,18 +162,6 @@ static const char *range2str(uint32_t op)
 	return expr_range_str[op];
 }
 
-static inline int nftnl_str2range(const char *op)
-{
-	if (strcmp(op, "eq") == 0)
-		return NFT_RANGE_EQ;
-	else if (strcmp(op, "neq") == 0)
-		return NFT_RANGE_NEQ;
-	else {
-		errno = EINVAL;
-		return -1;
-	}
-}
-
 static int nftnl_expr_range_snprintf(char *buf, size_t remain,
 				     uint32_t flags, const struct nftnl_expr *e)
 {

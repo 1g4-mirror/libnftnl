@@ -177,18 +177,6 @@ static const char *ctkey2str(uint32_t ctkey)
 	return ctkey2str_array[ctkey];
 }
 
-static inline int str2ctkey(const char *ctkey)
-{
-	int i;
-
-	for (i = 0; i < NFT_CT_MAX; i++) {
-		if (strcmp(ctkey2str_array[i], ctkey) == 0)
-			return i;
-	}
-
-	return -1;
-}
-
 static const char *ctdir2str(uint8_t ctdir)
 {
 	switch (ctdir) {
@@ -199,21 +187,6 @@ static const char *ctdir2str(uint8_t ctdir)
 	default:
 		return "unknown";
 	}
-}
-
-static inline int str2ctdir(const char *str, uint8_t *ctdir)
-{
-	if (strcmp(str, "original") == 0) {
-		*ctdir = IP_CT_DIR_ORIGINAL;
-		return 0;
-	}
-
-	if (strcmp(str, "reply") == 0) {
-		*ctdir = IP_CT_DIR_REPLY;
-		return 0;
-	}
-
-	return -1;
 }
 
 static int

@@ -202,33 +202,6 @@ static const char *op2str(uint8_t op)
 	}
 }
 
-static inline int str2exthdr_op(const char* str)
-{
-	if (!strcmp(str, "tcpopt"))
-		return NFT_EXTHDR_OP_TCPOPT;
-	if (!strcmp(str, "ipv4"))
-		return NFT_EXTHDR_OP_IPV4;
-
-	/* if str == "ipv6" or anything else */
-	return NFT_EXTHDR_OP_IPV6;
-}
-
-static inline int str2exthdr_type(const char *str)
-{
-	if (strcmp(str, "hopopts") == 0)
-		return IPPROTO_HOPOPTS;
-	else if (strcmp(str, "routing") == 0)
-		return IPPROTO_ROUTING;
-	else if (strcmp(str, "fragment") == 0)
-		return IPPROTO_FRAGMENT;
-	else if (strcmp(str, "dstopts") == 0)
-		return IPPROTO_DSTOPTS;
-	else if (strcmp(str, "mh") == 0)
-		return IPPROTO_MH;
-
-	return -1;
-}
-
 static int
 nftnl_expr_exthdr_snprintf(char *buf, size_t len,
 			   uint32_t flags, const struct nftnl_expr *e)

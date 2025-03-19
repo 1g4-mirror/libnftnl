@@ -488,17 +488,6 @@ static const char *nftnl_hooknum2str(int family, int hooknum)
 	return "unknown";
 }
 
-static inline int nftnl_str2hooknum(int family, const char *hook)
-{
-	int hooknum;
-
-	for (hooknum = 0; hooknum < NF_INET_NUMHOOKS; hooknum++) {
-		if (strcmp(hook, nftnl_hooknum2str(family, hooknum)) == 0)
-			return hooknum;
-	}
-	return -1;
-}
-
 EXPORT_SYMBOL(nftnl_flowtable_parse);
 int nftnl_flowtable_parse(struct nftnl_flowtable *c, enum nftnl_parse_type type,
 			  const char *data, struct nftnl_parse_err *err)

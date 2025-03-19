@@ -179,18 +179,6 @@ static const char *bo2str(uint32_t type)
 	return expr_byteorder_str[type];
 }
 
-static inline int nftnl_str2ntoh(const char *op)
-{
-	if (strcmp(op, "ntoh") == 0)
-		return NFT_BYTEORDER_NTOH;
-	else if (strcmp(op, "hton") == 0)
-		return NFT_BYTEORDER_HTON;
-	else {
-		errno = EINVAL;
-		return -1;
-	}
-}
-
 static int
 nftnl_expr_byteorder_snprintf(char *buf, size_t remain,
 			      uint32_t flags, const struct nftnl_expr *e)

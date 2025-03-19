@@ -148,26 +148,6 @@ static const char *cmp2str(uint32_t op)
 	return expr_cmp_str[op];
 }
 
-static inline int nftnl_str2cmp(const char *op)
-{
-	if (strcmp(op, "eq") == 0)
-		return NFT_CMP_EQ;
-	else if (strcmp(op, "neq") == 0)
-		return NFT_CMP_NEQ;
-	else if (strcmp(op, "lt") == 0)
-		return NFT_CMP_LT;
-	else if (strcmp(op, "lte") == 0)
-		return NFT_CMP_LTE;
-	else if (strcmp(op, "gt") == 0)
-		return NFT_CMP_GT;
-	else if (strcmp(op, "gte") == 0)
-		return NFT_CMP_GTE;
-	else {
-		errno = EINVAL;
-		return -1;
-	}
-}
-
 static int
 nftnl_expr_cmp_snprintf(char *buf, size_t remain,
 			uint32_t flags, const struct nftnl_expr *e)

@@ -739,17 +739,6 @@ int nftnl_chain_nlmsg_parse(const struct nlmsghdr *nlh, struct nftnl_chain *c)
 	return ret;
 }
 
-static inline int nftnl_str2hooknum(int family, const char *hook)
-{
-	int hooknum;
-
-	for (hooknum = 0; hooknum < NF_INET_NUMHOOKS; hooknum++) {
-		if (strcmp(hook, nftnl_hooknum2str(family, hooknum)) == 0)
-			return hooknum;
-	}
-	return -1;
-}
-
 static int nftnl_chain_snprintf_default(char *buf, size_t remain,
 					const struct nftnl_chain *c)
 {

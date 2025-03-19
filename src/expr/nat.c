@@ -202,18 +202,6 @@ static inline const char *nat2str(uint16_t nat)
 	}
 }
 
-static inline int nftnl_str2nat(const char *nat)
-{
-	if (strcmp(nat, "snat") == 0)
-		return NFT_NAT_SNAT;
-	else if (strcmp(nat, "dnat") == 0)
-		return NFT_NAT_DNAT;
-	else {
-		errno = EINVAL;
-		return -1;
-	}
-}
-
 static int
 nftnl_expr_nat_snprintf(char *buf, size_t remain,
 			uint32_t flags, const struct nftnl_expr *e)

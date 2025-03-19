@@ -173,19 +173,6 @@ static const char *meta_key2str(uint8_t key)
 	return "unknown";
 }
 
-static inline int str2meta_key(const char *str)
-{
-	int i;
-
-	for (i = 0; i < NFT_META_MAX; i++) {
-		if (strcmp(str, meta_key2str_array[i]) == 0)
-			return i;
-	}
-
-	errno = EINVAL;
-	return -1;
-}
-
 static int
 nftnl_expr_meta_snprintf(char *buf, size_t len,
 			 uint32_t flags, const struct nftnl_expr *e)
