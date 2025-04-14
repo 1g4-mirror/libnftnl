@@ -175,7 +175,7 @@ static void
 nftnl_obj_tunnel_build(struct nlmsghdr *nlh, const struct nftnl_obj *e)
 {
 	struct nftnl_obj_tunnel *tun = nftnl_obj_data(e);
-	struct nlattr *nest;
+	struct nlattr *nest, *nest_inner;
 
 	if (e->flags & (1 << NFTNL_OBJ_TUNNEL_ID))
 		mnl_attr_put_u32(nlh, NFTA_TUNNEL_KEY_ID, htonl(tun->id));
@@ -214,16 +214,16 @@ nftnl_obj_tunnel_build(struct nlmsghdr *nlh, const struct nftnl_obj *e)
 		mnl_attr_put_u32(nlh, NFTA_TUNNEL_KEY_FLAGS, htonl(tun->tun_flags));
 	if (e->flags & (1 << NFTNL_OBJ_TUNNEL_VXLAN_GBP)) {
 		nest = mnl_attr_nest_start(nlh, NFTA_TUNNEL_KEY_OPTS);
+		nest_inner = mnl_attr_nest_start(nlh, NFTA_TUNNEL_KEY_OPTS_VXLAN);
 		mnl_attr_put_u32(nlh, NFTA_TUNNEL_KEY_VXLAN_GBP,
 				 htonl(tun->u.tun_vxlan.gbp));
+		mnl_attr_nest_end(nlh, nest_inner);
 		mnl_attr_nest_end(nlh, nest);
 	}
 	if (e->flags & (1 << NFTNL_OBJ_TUNNEL_ERSPAN_VERSION) &&
 	    (e->flags & (1 << NFTNL_OBJ_TUNNEL_ERSPAN_V1_INDEX) ||
 	     (e->flags & (1 << NFTNL_OBJ_TUNNEL_ERSPAN_V2_HWID) &&
 	      e->flags & (1u << NFTNL_OBJ_TUNNEL_ERSPAN_V2_DIR)))) {
-		struct nlattr *nest_inner;
-
 		nest = mnl_attr_nest_start(nlh, NFTA_TUNNEL_KEY_OPTS);
 		nest_inner = mnl_attr_nest_start(nlh, NFTA_TUNNEL_KEY_OPTS_ERSPAN);
 		mnl_attr_put_u32(nlh, NFTA_TUNNEL_KEY_ERSPAN_VERSION,
