@@ -687,7 +687,7 @@ int nftnl_set_elem_parse_file(struct nftnl_set_elem *e, enum nftnl_parse_type ty
 int nftnl_set_elem_snprintf_default(char *buf, size_t remain,
 				    const struct nftnl_set_elem *e)
 {
-	int ret, dregtype = DATA_VALUE, offset = 0, i;
+	int ret, dregtype = DATA_NONE, offset = 0, i;
 
 	ret = snprintf(buf, remain, "element ");
 	SNPRINTF_BUFFER_SIZE(ret, remain, offset);
@@ -705,18 +705,29 @@ int nftnl_set_elem_snprintf_default(char *buf, size_t remain,
 		SNPRINTF_BUFFER_SIZE(ret, remain, offset);
 	}
 
-	ret = snprintf(buf + offset, remain, " : ");
-	SNPRINTF_BUFFER_SIZE(ret, remain, offset);
-
-	if (e->flags & (1 << NFTNL_SET_ELEM_VERDICT))
+	if (e->flags & (1 << NFTNL_SET_ELEM_DATA))
+		dregtype = DATA_VALUE;
+	else if (e->flags & (1 << NFTNL_SET_ELEM_CHAIN))
+		dregtype = DATA_CHAIN;
+	else if (e->flags & (1 << NFTNL_SET_ELEM_VERDICT))
 		dregtype = DATA_VERDICT;
 
-	ret = nftnl_data_reg_snprintf(buf + offset, remain, &e->data,
-				      DATA_F_NOPFX, dregtype);
-	SNPRINTF_BUFFER_SIZE(ret, remain, offset);
+	if (dregtype != DATA_NONE) {
+		ret = snprintf(buf + offset, remain, " : ");
+		SNPRINTF_BUFFER_SIZE(ret, remain, offset);
 
-	ret = snprintf(buf + offset, remain, "%u [end]", e->set_elem_flags);
-	SNPRINTF_BUFFER_SIZE(ret, remain, offset);
+		ret = nftnl_data_reg_snprintf(buf + offset, remain, &e->data,
+					      DATA_F_NOPFX, dregtype);
+		SNPRINTF_BUFFER_SIZE(ret, remain, offset);
+	} else if (e->flags & (1 << NFTNL_SET_ELEM_OBJREF)) {
+		ret = snprintf(buf + offset, remain, " : %s ", e->objref);
+		SNPRINTF_BUFFER_SIZE(ret, remain, offset);
+	}
+
+	if (e->set_elem_flags) {
+		ret = snprintf(buf + offset, remain, "flags %u ", e->set_elem_flags);
+		SNPRINTF_BUFFER_SIZE(ret, remain, offset);
+	}
 
 	if (e->user.len) {
 		ret = snprintf(buf + offset, remain, "  userdata = { ");
