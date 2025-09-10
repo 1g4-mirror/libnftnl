@@ -20,19 +20,36 @@
 #include <libnftnl/rule.h>
 #include "internal.h"
 
+static bool big_endian_host(void)
+{
+	uint16_t v = 1;
+
+	return v == htons(v);
+}
+
 static int
 nftnl_data_reg_value_snprintf_default(char *buf, size_t remain,
 				      const union nftnl_data_reg *reg,
 				      uint32_t flags)
 {
 	const char *pfx = flags & DATA_F_NOPFX ? "" : "0x", *sep = "";
-	int offset = 0, ret, i;
+	bool reverse = reg->byteorder && !big_endian_host();
+	int offset = 0, ret, i, idx;
 
-	for (i = 0; i < div_round_up(reg->len, sizeof(uint32_t)); i++) {
-		ret = snprintf(buf + offset, remain,
-			       "%s%s%.8x", sep, pfx, reg->val[i]);
+	for (i = 0; i < reg->len; i++) {
+		if ((i % 4) == 0) {
+			ret = snprintf(buf + offset, remain, "%s%s", sep, pfx);
+			SNPRINTF_BUFFER_SIZE(ret, remain, offset);
+			sep = " ";
+		}
+		if (reverse)
+			idx = reg->len - i - 1;
+		else
+			idx = i;
+
+		ret = snprintf(buf + offset, remain, "%.2x",
+			       ((uint8_t *)reg->val)[idx]);
 		SNPRINTF_BUFFER_SIZE(ret, remain, offset);
-		sep = " ";
 	}
 
 	return offset;
