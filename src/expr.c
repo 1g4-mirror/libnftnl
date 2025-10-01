@@ -91,6 +91,13 @@ int nftnl_expr_set(struct nftnl_expr *expr, uint16_t type,
 	return __nftnl_expr_set(expr, type, data, data_len, 0);
 }
 
+EXPORT_SYMBOL(nftnl_expr_set_imm);
+int nftnl_expr_set_imm(struct nftnl_expr *expr, uint16_t type,
+		       const void *data, uint32_t data_len, uint32_t byteorder)
+{
+	return __nftnl_expr_set(expr, type, data, data_len, byteorder);
+}
+
 EXPORT_SYMBOL(nftnl_expr_set_u8);
 void
 nftnl_expr_set_u8(struct nftnl_expr *expr, uint16_t type, uint8_t data)

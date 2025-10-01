@@ -108,9 +108,9 @@ static uint32_t nftnl_set_elem_validate[NFTNL_SET_ELEM_MAX + 1] = {
 	[NFTNL_SET_ELEM_EXPIRATION]	= sizeof(uint64_t),
 };
 
-EXPORT_SYMBOL(nftnl_set_elem_set);
-int nftnl_set_elem_set(struct nftnl_set_elem *s, uint16_t attr,
-		       const void *data, uint32_t data_len)
+static int
+__nftnl_set_elem_set(struct nftnl_set_elem *s, uint16_t attr, const void *data,
+		     uint32_t data_len, uint32_t byteorder, uint8_t *sizes)
 {
 	struct nftnl_expr *expr, *tmp;
 
@@ -122,11 +122,13 @@ int nftnl_set_elem_set(struct nftnl_set_elem *s, uint16_t attr,
 		memcpy(&s->set_elem_flags, data, sizeof(s->set_elem_flags));
 		break;
 	case NFTNL_SET_ELEM_KEY:	/* NFTA_SET_ELEM_KEY */
-		if (nftnl_data_cpy(&s->key, data, data_len, 0, NULL) < 0)
+		if (nftnl_data_cpy(&s->key, data,
+				   data_len, byteorder, sizes) < 0)
 			return -1;
 		break;
 	case NFTNL_SET_ELEM_KEY_END:	/* NFTA_SET_ELEM_KEY_END */
-		if (nftnl_data_cpy(&s->key_end, data, data_len, 0, NULL) < 0)
+		if (nftnl_data_cpy(&s->key_end, data,
+				   data_len, byteorder, sizes) < 0)
 			return -1;
 		break;
 	case NFTNL_SET_ELEM_VERDICT:	/* NFTA_SET_ELEM_DATA */
@@ -141,7 +143,8 @@ int nftnl_set_elem_set(struct nftnl_set_elem *s, uint16_t attr,
 			return -1;
 		break;
 	case NFTNL_SET_ELEM_DATA:	/* NFTA_SET_ELEM_DATA */
-		if (nftnl_data_cpy(&s->data, data, data_len, 0, NULL) < 0)
+		if (nftnl_data_cpy(&s->data, data,
+				   data_len, byteorder, sizes) < 0)
 			return -1;
 		break;
 	case NFTNL_SET_ELEM_TIMEOUT:	/* NFTA_SET_ELEM_TIMEOUT */
@@ -178,6 +181,21 @@ int nftnl_set_elem_set(struct nftnl_set_elem *s, uint16_t attr,
 	}
 	s->flags |= (1 << attr);
 	return 0;
+}
+
+EXPORT_SYMBOL(nftnl_set_elem_set);
+int nftnl_set_elem_set(struct nftnl_set_elem *s, uint16_t attr,
+		       const void *data, uint32_t data_len)
+{
+	return __nftnl_set_elem_set(s, attr, data, data_len, 0, NULL);
+}
+
+EXPORT_SYMBOL(nftnl_set_elem_set_imm);
+int nftnl_set_elem_set_imm(struct nftnl_set_elem *s, uint16_t attr,
+			   const void *data, uint32_t data_len,
+			   uint32_t byteorder, uint8_t *sizes)
+{
+	return __nftnl_set_elem_set(s, attr, data, data_len, byteorder, sizes);
 }
 
 EXPORT_SYMBOL(nftnl_set_elem_set_u32);
