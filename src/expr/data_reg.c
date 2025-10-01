@@ -201,7 +201,8 @@ int nftnl_parse_data(union nftnl_data_reg *data, struct nlattr *attr, int *type)
 	return ret;
 }
 
-int nftnl_data_cpy(union nftnl_data_reg *dreg, const void *src, uint32_t len)
+int nftnl_data_cpy(union nftnl_data_reg *dreg, const void *src,
+		   uint32_t len, uint32_t byteorder)
 {
 	int ret = 0;
 
@@ -212,5 +213,6 @@ int nftnl_data_cpy(union nftnl_data_reg *dreg, const void *src, uint32_t len)
 
 	memcpy(dreg->val, src, len);
 	dreg->len = len;
+	dreg->byteorder = byteorder;
 	return ret;
 }

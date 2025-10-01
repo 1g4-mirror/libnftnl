@@ -37,9 +37,11 @@ nftnl_expr_range_set(struct nftnl_expr *e, uint16_t type,
 		memcpy(&range->op, data, data_len);
 		break;
 	case NFTNL_EXPR_RANGE_FROM_DATA:
-		return nftnl_data_cpy(&range->data_from, data, data_len);
+		return nftnl_data_cpy(&range->data_from, data,
+				      data_len, byteorder);
 	case NFTNL_EXPR_RANGE_TO_DATA:
-		return nftnl_data_cpy(&range->data_to, data, data_len);
+		return nftnl_data_cpy(&range->data_to, data,
+				      data_len, byteorder);
 	}
 	return 0;
 }
