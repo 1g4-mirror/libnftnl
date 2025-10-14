@@ -27,29 +27,57 @@ static bool big_endian_host(void)
 	return v == htons(v);
 }
 
-static int
-nftnl_data_reg_value_snprintf_default(char *buf, size_t remain,
-				      const union nftnl_data_reg *reg,
-				      uint32_t flags)
+static int __reg_value_snprintf(char *buf, size_t remain,
+				uint8_t *data, size_t datalen,
+				bool reverse, const char *pfx)
 {
-	const char *pfx = flags & DATA_F_NOPFX ? "" : "0x", *sep = "";
-	bool reverse = reg->byteorder && !big_endian_host();
 	int offset = 0, ret, i, idx;
+	const char *sep = "";
 
-	for (i = 0; i < reg->len; i++) {
+	for (i = 0; i < datalen; i++) {
 		if ((i % 4) == 0) {
 			ret = snprintf(buf + offset, remain, "%s%s", sep, pfx);
 			SNPRINTF_BUFFER_SIZE(ret, remain, offset);
 			sep = " ";
 		}
 		if (reverse)
-			idx = reg->len - i - 1;
+			idx = datalen - i - 1;
 		else
 			idx = i;
 
-		ret = snprintf(buf + offset, remain, "%.2x",
-			       ((uint8_t *)reg->val)[idx]);
+		ret = snprintf(buf + offset, remain, "%.2x", data[idx]);
 		SNPRINTF_BUFFER_SIZE(ret, remain, offset);
+	}
+
+	return offset;
+}
+
+static int
+nftnl_data_reg_value_snprintf_default(char *buf, size_t remain,
+				      const union nftnl_data_reg *reg,
+				      uint32_t flags)
+{
+	uint32_t byteorder = big_endian_host() ? 0 : reg->byteorder;
+	const char *pfx = flags & DATA_F_NOPFX ? "" : "0x";
+	int offset = 0, ret, i, pos = 0;
+
+	for (i = 0; i < array_size(reg->sizes); i++) {
+		int curlen = reg->sizes[i] ?: reg->len;
+		bool reverse = byteorder & (1 << i);
+
+		if (i > 0) {
+			ret = snprintf(buf + offset, remain, " . ");
+			SNPRINTF_BUFFER_SIZE(ret, remain, offset);
+		}
+
+		ret = __reg_value_snprintf(buf + offset, remain,
+					   (void *)&reg->val[pos],
+					   curlen, reverse, pfx);
+		SNPRINTF_BUFFER_SIZE(ret, remain, offset);
+
+		pos += div_round_up(curlen, sizeof(uint32_t));
+		if (pos >= reg->len / sizeof(uint32_t))
+			break;
 	}
 
 	return offset;
