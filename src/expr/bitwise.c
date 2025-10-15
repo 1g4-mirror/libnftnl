@@ -51,11 +51,14 @@ nftnl_expr_bitwise_set(struct nftnl_expr *e, uint16_t type,
 		memcpy(&bitwise->len, data, data_len);
 		break;
 	case NFTNL_EXPR_BITWISE_MASK:
-		return nftnl_data_cpy(&bitwise->mask, data, data_len, byteorder);
+		return nftnl_data_cpy(&bitwise->mask, data,
+				      data_len, byteorder, NULL);
 	case NFTNL_EXPR_BITWISE_XOR:
-		return nftnl_data_cpy(&bitwise->xor, data, data_len, byteorder);
+		return nftnl_data_cpy(&bitwise->xor, data,
+				      data_len, byteorder, NULL);
 	case NFTNL_EXPR_BITWISE_DATA:
-		return nftnl_data_cpy(&bitwise->data, data, data_len, byteorder);
+		return nftnl_data_cpy(&bitwise->data, data,
+				      data_len, byteorder, NULL);
 	}
 	return 0;
 }
