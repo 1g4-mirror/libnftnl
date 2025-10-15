@@ -225,11 +225,14 @@ nftnl_expr_bitwise_snprintf_mask_xor(char *buf, size_t remain,
 				      0, DATA_VALUE);
 	SNPRINTF_BUFFER_SIZE(ret, remain, offset);
 
-	ret = snprintf(buf + offset, remain, ") ^ ");
+	ret = snprintf(buf + offset, remain, " ) ^ ");
 	SNPRINTF_BUFFER_SIZE(ret, remain, offset);
 
 	ret = nftnl_data_reg_snprintf(buf + offset, remain, &bitwise->xor,
 				      0, DATA_VALUE);
+	SNPRINTF_BUFFER_SIZE(ret, remain, offset);
+
+	ret = snprintf(buf + offset, remain, " ");
 	SNPRINTF_BUFFER_SIZE(ret, remain, offset);
 
 	return offset;
@@ -248,7 +251,7 @@ nftnl_expr_bitwise_snprintf_shift(char *buf, size_t remain, const char *op,
 				      0, DATA_VALUE);
 	SNPRINTF_BUFFER_SIZE(ret, remain, offset);
 
-	ret = snprintf(buf + offset, remain, ") ");
+	ret = snprintf(buf + offset, remain, " ) ");
 	SNPRINTF_BUFFER_SIZE(ret, remain, offset);
 
 	return offset;

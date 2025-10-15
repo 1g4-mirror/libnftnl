@@ -201,6 +201,9 @@ nftnl_expr_immediate_snprintf(char *buf, size_t remain,
 		SNPRINTF_BUFFER_SIZE(ret, remain, offset);
 	}
 
+	ret = snprintf(buf + offset, remain, " ");
+	SNPRINTF_BUFFER_SIZE(ret, remain, offset);
+
 	return offset;
 }
 

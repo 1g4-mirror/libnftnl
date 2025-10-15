@@ -720,12 +720,12 @@ int nftnl_set_elem_snprintf_default(char *buf, size_t remain,
 					      DATA_F_NOPFX, dregtype);
 		SNPRINTF_BUFFER_SIZE(ret, remain, offset);
 	} else if (e->flags & (1 << NFTNL_SET_ELEM_OBJREF)) {
-		ret = snprintf(buf + offset, remain, " : %s ", e->objref);
+		ret = snprintf(buf + offset, remain, " : %s", e->objref);
 		SNPRINTF_BUFFER_SIZE(ret, remain, offset);
 	}
 
 	if (e->set_elem_flags) {
-		ret = snprintf(buf + offset, remain, "flags %u ", e->set_elem_flags);
+		ret = snprintf(buf + offset, remain, " flags %u", e->set_elem_flags);
 		SNPRINTF_BUFFER_SIZE(ret, remain, offset);
 	}
 

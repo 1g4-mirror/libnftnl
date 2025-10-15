@@ -25,15 +25,14 @@ nftnl_data_reg_value_snprintf_default(char *buf, size_t remain,
 				      const union nftnl_data_reg *reg,
 				      uint32_t flags)
 {
-	const char *pfx = flags & DATA_F_NOPFX ? "" : "0x";
+	const char *pfx = flags & DATA_F_NOPFX ? "" : "0x", *sep = "";
 	int offset = 0, ret, i;
-
-
 
 	for (i = 0; i < div_round_up(reg->len, sizeof(uint32_t)); i++) {
 		ret = snprintf(buf + offset, remain,
-			       "%s%.8x ", pfx, reg->val[i]);
+			       "%s%s%.8x", sep, pfx, reg->val[i]);
 		SNPRINTF_BUFFER_SIZE(ret, remain, offset);
+		sep = " ";
 	}
 
 	return offset;
@@ -46,11 +45,11 @@ nftnl_data_reg_verdict_snprintf_def(char *buf, size_t size,
 {
 	int remain = size, offset = 0, ret = 0;
 
-	ret = snprintf(buf, size, "%s ", nftnl_verdict2str(reg->verdict));
+	ret = snprintf(buf, size, "%s", nftnl_verdict2str(reg->verdict));
 	SNPRINTF_BUFFER_SIZE(ret, remain, offset);
 
 	if (reg->chain != NULL) {
-		ret = snprintf(buf + offset, remain, "-> %s ", reg->chain);
+		ret = snprintf(buf + offset, remain, " -> %s", reg->chain);
 		SNPRINTF_BUFFER_SIZE(ret, remain, offset);
 	}
 

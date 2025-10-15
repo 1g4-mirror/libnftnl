@@ -176,8 +176,14 @@ static int nftnl_expr_range_snprintf(char *buf, size_t remain,
 				      0, DATA_VALUE);
 	SNPRINTF_BUFFER_SIZE(ret, remain, offset);
 
+	ret = snprintf(buf + offset, remain, " ");
+	SNPRINTF_BUFFER_SIZE(ret, remain, offset);
+
 	ret = nftnl_data_reg_snprintf(buf + offset, remain, &range->data_to,
 				      0, DATA_VALUE);
+	SNPRINTF_BUFFER_SIZE(ret, remain, offset);
+
+	ret = snprintf(buf + offset, remain, " ");
 	SNPRINTF_BUFFER_SIZE(ret, remain, offset);
 
 	return offset;
