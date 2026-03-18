@@ -866,9 +866,17 @@ static int nftnl_tunnel_opt_geneve_set(struct nftnl_tunnel_opt *opt, uint16_t ty
 {
 	switch(type) {
 	case NFTNL_TUNNEL_GENEVE_CLASS:
+		if (data_len != sizeof(uint16_t)) {
+			errno = EINVAL;
+			return -1;
+		}
 		memcpy(&opt->geneve.geneve_class, data, data_len);
 		break;
 	case NFTNL_TUNNEL_GENEVE_TYPE:
+		if (data_len != sizeof(uint8_t)) {
+			errno = EINVAL;
+			return -1;
+		}
 		memcpy(&opt->geneve.type, data, data_len);
 		break;
 	case NFTNL_TUNNEL_GENEVE_DATA:
